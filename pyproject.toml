@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "dataquill"
+version = "0.1.0"
+description = ""
+authors = ["Venu Vardhan Reddy Tekula <vt2182@nyu.edu>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+streamlit = "^1.22.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
