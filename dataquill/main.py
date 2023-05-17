@@ -14,11 +14,10 @@ from utils import (
 
 from openai.error import OpenAIError
 
-OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
-# OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+# OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
-
-QUERY = "Please provide a summary of the dataset used in the research paper, including information on the number of observations, variables measured, data collection method, and any preprocessing steps described."
+QUERY = "Please provide information on the dataset and data collection methods used in the research paper. Additionally, identify and fetch the citations or references that are specifically related to the dataset."
 
 
 st.title("📊🪶 DataQuill")
@@ -55,26 +54,25 @@ if uploaded_file is not None:
     text = text_to_docs(doc)
 
     try:
-        with st.spinner("Indexing document... This may take a while⏳"):
+        with st.spinner("Indexing document... ⏳"):
             index = embed_docs(text)
         st.session_state["api_key_configured"] = True
     except OpenAIError as e:
         st.error(e._message)
 
-# button = st.button("Go!")
-
-# if button:
 if not index:
     st.error("Please upload a document!!!")
 else:
     st.session_state["submit"] = True
 
     dataset, mentions = st.columns(2)
-    sources = search_docs(index, QUERY)
+    with st.spinner("Generating results... ⏳"):
+        sources = search_docs(index, QUERY)
 
     try:
-        answer = get_answer(sources, QUERY)
-        sources = get_sources(answer, sources)
+        with st.spinner("Writing the results... ⏳"):
+            answer = get_answer(sources, QUERY)
+            sources = get_sources(answer, sources)
 
         with dataset:
             st.markdown("#### Dataset")

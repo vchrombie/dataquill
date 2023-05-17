@@ -15,7 +15,6 @@ from langchain.vectorstores.faiss import FAISS
 from embeddings import OpenAIEmbeddings
 
 
-@st.cache_data
 def parse_pdf(file: BytesIO) -> List[str]:
     """
     Parses a PDF file into a list of strings, one for each page.
@@ -36,7 +35,6 @@ def parse_pdf(file: BytesIO) -> List[str]:
     return output
 
 
-st.cache_data
 def text_to_docs(text: str | List[str]) -> List[Document]:
     """
     Converts a string or list of strings to a list of Documents
@@ -71,7 +69,6 @@ def text_to_docs(text: str | List[str]) -> List[Document]:
     return doc_chunks
 
 
-st.cache_data
 def embed_docs(docs: List[Document]) -> VectorStore:
     """
     Embeds a list of Documents and returns a FAISS index.
@@ -85,7 +82,6 @@ def embed_docs(docs: List[Document]) -> VectorStore:
     return index
 
 
-st.cache_data
 def search_docs(index: VectorStore, query: str) -> List[Document]:
     """
     Searches a FAISS index for similar chunks to
@@ -97,7 +93,6 @@ def search_docs(index: VectorStore, query: str) -> List[Document]:
     return docs
 
 
-st.cache_data
 def get_answer(_docs: List[Document], _query: str) -> Dict[str, Any]:
     """
     Gets an answer to a question from a list of Documents.
@@ -121,7 +116,6 @@ def get_answer(_docs: List[Document], _query: str) -> Dict[str, Any]:
     return answer
 
 
-@st.cache_data
 def get_sources(_answer: Dict[str, Any], _docs: List[Document]) -> List[Document]:
     """
     Gets the source documents for an answer.
