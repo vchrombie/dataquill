@@ -1,6 +1,25 @@
+import os
 import streamlit as st
 
 st.set_page_config(page_title="📊🪶 DataQuill", layout="wide")
+
+from utils import (
+    parse_pdf,
+    text_to_docs,
+    embed_docs,
+    search_docs,
+    get_answer,
+    get_sources
+)
+
+from openai.error import OpenAIError
+
+OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
+# OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+
+
+QUERY = "Please provide a summary of the dataset used in the research paper, including information on the number of observations, variables measured, data collection method, and any preprocessing steps described."
+
 
 st.title("📊🪶 DataQuill")
 
@@ -24,3 +43,49 @@ uploaded_file = st.file_uploader(
     help="Scanned documents are not supported yet!",
     on_change=clear_submit,
 )
+
+index = None
+doc = None
+if uploaded_file is not None:
+    if uploaded_file.name.endswith(".pdf"):
+        doc = parse_pdf(uploaded_file)
+    else:
+        raise ValueError("File type not supported!")
+
+    text = text_to_docs(doc)
+
+    try:
+        with st.spinner("Indexing document... This may take a while⏳"):
+            index = embed_docs(text)
+        st.session_state["api_key_configured"] = True
+    except OpenAIError as e:
+        st.error(e._message)
+
+# button = st.button("Go!")
+
+# if button:
+if not index:
+    st.error("Please upload a document!!!")
+else:
+    st.session_state["submit"] = True
+
+    dataset, mentions = st.columns(2)
+    sources = search_docs(index, QUERY)
+
+    try:
+        answer = get_answer(sources, QUERY)
+        sources = get_sources(answer, sources)
+
+        with dataset:
+            st.markdown("#### Dataset")
+            st.markdown(answer["output_text"].split("SOURCES: ")[0])
+
+        with mentions:
+            st.markdown("#### Mentions")
+            for source in sources:
+                st.markdown(source.page_content)
+                st.markdown(source.metadata["source"])
+                st.markdown("---")
+
+    except OpenAIError as e:
+        st.error(e._message)
