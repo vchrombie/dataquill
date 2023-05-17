@@ -100,18 +100,11 @@ def get_answer(_docs: List[Document], _query: str) -> Dict[str, Any]:
 
     # Get the answer
     chain = load_qa_with_sources_chain(
-        OpenAI(
-            temperature=0,
-            openai_api_key=st.session_state.get("OPENAI_API_KEY")
-        ),
+        OpenAI(temperature=0, openai_api_key=st.session_state.get("OPENAI_API_KEY")),
         chain_type="stuff",
     )
     answer = chain(
-        {
-            "input_documents": _docs,
-            "question": _query
-        },
-        return_only_outputs=True
+        {"input_documents": _docs, "question": _query}, return_only_outputs=True
     )
     return answer
 
@@ -130,4 +123,3 @@ def get_sources(_answer: Dict[str, Any], _docs: List[Document]) -> List[Document
             source_docs.append(doc)
 
     return source_docs
-

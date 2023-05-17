@@ -1,39 +1,54 @@
-import os
-import streamlit as st
-
-st.set_page_config(page_title="📊🪶 DataQuill", layout="wide")
-
+from openai.error import OpenAIError
 from utils import (
     parse_pdf,
     text_to_docs,
     embed_docs,
     search_docs,
     get_answer,
-    get_sources
+    get_sources,
 )
+import os
+import streamlit as st
 
-from openai.error import OpenAIError
+st.set_page_config(page_title="DataQuill🪶", page_icon="🔍", layout="wide")
+
 
 # OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
-QUERY = "Please provide information on the dataset and data collection methods used in the research paper. Additionally, identify and fetch the citations or references that are specifically related to the dataset."
+QUERY = """Please provide information on the dataset and data
+collection methods used in the research paper. Additionally,
+identify and fetch the citations or references that are specifically
+related to the dataset."""
 
 
-st.title("📊🪶 DataQuill")
+st.title("🔍 DataQuill🪶")
+
 
 def clear_submit():
     st.session_state["submit"] = False
 
+
 with st.sidebar:
     st.markdown("# About")
-    st.markdown(
-        "DataQuill is an AI-powered tool using Large Language Models (LLMs) to extract datasets from research papers. It transforms unstructured information into structured data, streamlining research, and making data analysis simpler, faster, and more reliable for everyone."
-    )
+    st.markdown("""
+        DataQuill is an AI-powered tool using Large Language Models(LLMs)
+        to extract datasets from research papers.
+        """)
     st.markdown("---")
-    st.markdown(
-        "Source code: [vchrombie/dataquill](https://github.com/vchrombie/dataquill) "
-    )
+    st.markdown("""
+        Source code:
+        [vchrombie/dataquill](https://github.com/vchrombie/dataquill)
+        """)
+    st.markdown("""
+        Developed DataQuill tool as a part of my participation in the seminar-styled
+        course CS-GY 9223: Special Topics - [Dataset Search and Discovery](https://vida-nyu.github.io/dataset-search-and-discovery-seminar/)
+        under [Prof. Juliana Freire](https://engineering.nyu.edu/faculty/juliana-freire)
+        and [NYU VIDA](https://vida.engineering.nyu.edu/).
+        """)
+    st.markdown("📍 Made at NYU Tandon!")
+    st.markdown("---")
+    st.markdown("Built with 🦜️🔗 LangChain, 🤖️ OpenAI, and 🐍️ Streamlit.")
     st.markdown("---")
 
 uploaded_file = st.file_uploader(
